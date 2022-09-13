@@ -1,6 +1,6 @@
 const express = require("express");
 var cors = require("cors");
-const MailingService = "https://mailing-service-reimbursement.herokuapp.com/";
+
 let nodemailer = require("nodemailer");
 const bodyParser = require("body-parser");
 const creds = require("./credential.json");
@@ -14,23 +14,6 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json({ limit: "500mb" }));
 
 app.use(bodyParser.urlencoded({ limit: "500mb", extended: true }));
-
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", MailingService);
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  if (req.method === "OPTIONS") {
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    );
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH");
-    return res.status(200).json({});
-  }
-  next();
-});
 
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
