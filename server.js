@@ -9,10 +9,7 @@ let app = express();
 
 const path = require("path");
 
-var corsOptions = {
-  origin: "https://mailing-service-reimbursement.herokuapp.com/",
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
+app.use(cors());
 
 app.use("/public", express.static(path.join(__dirname, "public")));
 
