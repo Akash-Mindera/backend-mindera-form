@@ -21,10 +21,9 @@ if (process.env.NODE_ENV === "production") {
     express.static(path.join(__dirname, "reimbursement-form-mindera/build"))
   );
   //
-  app.get("*", (req, res) => {
-    res.sendfile(
-      path.join((__dirname = "reimbursement-form-mindera/build/index.html"))
-    );
+  app.get("*", function (req, res) {
+    const index = path.join(__dirname, "build", "index.html");
+    res.sendFile(index);
   });
 }
 
