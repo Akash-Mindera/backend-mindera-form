@@ -439,7 +439,7 @@ const fundsRejectedEmailTemplate = (
   `;
 };
 
-app.post("/mail", cors(corsOptions), (req, res) => {
+app.post("/mail", (req, res) => {
   var name = req.body.employeeTitle;
   var time = new Date().toLocaleString();
   var email = req.body.employeeMail;
