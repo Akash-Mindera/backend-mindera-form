@@ -9,6 +9,11 @@ let app = express();
 
 const path = require("path");
 
+var corsOptions = {
+  origin: "https://mailing-service-reimbursement.herokuapp.com/",
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
 app.use("/public", express.static(path.join(__dirname, "public")));
 
 app.use(bodyParser.json({ limit: "500mb" }));
@@ -33,8 +38,10 @@ const emailTemplate = (
   expenseDate,
   expenseItem,
   refundAmount,
+  invoiceDate,
   message,
   invoiceNo,
+  vendorName,
   consent,
   paidTo
 ) => {
@@ -85,10 +92,14 @@ const emailTemplate = (
     <p style='margin-top:10px'>Expense Category : ${expenseItem}</p>
     
     <p style='margin-top:10px'>Amount : ${refundAmount}</p>
+
+    <p style='margin-top:10px'>Invoice Date : ${invoiceDate}</p>
     
     <p style='margin-top:10px'>Expense Description : ${message}</p>
     
     <p style='margin-top:10px'>Invoice No : ${invoiceNo}</p>
+
+    <p style='margin-top:10px'>Vendor Name : ${vendorName}</p>
     
    <p style='margin-top:10px'>Employee Consent : ${consent}<p>
     
@@ -105,11 +116,14 @@ const approvalEmailTemplate = (
   time,
   email,
   userId,
+  account,
   expenseDate,
   expenseItem,
   refundAmount,
+  invoiceDate,
   message,
   invoiceNo,
+  vendorName,
   consent,
   paidTo
 ) => {
@@ -152,16 +166,22 @@ const approvalEmailTemplate = (
     <p style='margin-top:10px'>Employee Mail Id : ${email}</p>
    
     <p style='margin-top:10px'>Employee Id : ${userId}</p>
+
+    <p style='margin-top:10px'>Approved Account : ${account}</p>
     
     <p style='margin-top:10px'>Expense Date : ${expenseDate}</p>
     
     <p style='margin-top:10px'>Expense Category : ${expenseItem}</p>
     
     <p style='margin-top:10px'>Amount : ${refundAmount}</p>
+
+    <p style='margin-top:10px'>Invoice Date : ${invoiceDate}</p>
     
     <p style='margin-top:10px'>Expense Description : ${message}</p>
     
     <p style='margin-top:10px'>Invoice No : ${invoiceNo}</p>
+
+    <p style='margin-top:10px'>Vendor Name : ${vendorName}</p>
     
    <p style='margin-top:10px'>Employee Consent : ${consent}<p>
     
@@ -179,11 +199,14 @@ const rejectedEmailTemplate = (
   email,
   rejectionText,
   userId,
+  account,
   expenseDate,
   expenseItem,
   refundAmount,
+  invoiceDate,
   message,
   invoiceNo,
+  vendorName,
   consent,
   paidTo
 ) => {
@@ -227,6 +250,8 @@ const rejectedEmailTemplate = (
     <p style='margin-top:10px'><b>Rejection Reason: ${rejectionText}</b></p>
    
     <p style='margin-top:10px'>Employee Id : ${userId}</p>
+
+    <p style='margin-top:10px'> Rejected Account : ${account}</p>
     
     <p style='margin-top:10px'>Expense Date : ${expenseDate}</p>
     
@@ -234,9 +259,13 @@ const rejectedEmailTemplate = (
     
     <p style='margin-top:10px'>Amount : ${refundAmount}</p>
     
+    <p style='margin-top:10px'>Invoice Date : ${invoiceDate}</p>
+
     <p style='margin-top:10px'>Expense Description : ${message}</p>
     
     <p style='margin-top:10px'>Invoice No : ${invoiceNo}</p>
+
+    <p style='margin-top:10px'>Vendor Name : ${vendorName}</p>
     
    <p style='margin-top:10px'>Employee Consent : ${consent}<p>
     
@@ -253,11 +282,14 @@ const fundsProcessedEmailTemplate = (
   time,
   email,
   userId,
+  account,
   expenseDate,
   expenseItem,
   refundAmount,
+  invoiceDate,
   message,
   invoiceNo,
+  vendorName,
   consent,
   paidTo
 ) => {
@@ -298,6 +330,8 @@ const fundsProcessedEmailTemplate = (
 
     <p style='margin-top:10px'>Employee Mail Id : ${email}</p>
    
+    <p style='margin-top:10px'>Approved Account : ${account}</p>
+
     <p style='margin-top:10px'>Employee Id : ${userId}</p>
     
     <p style='margin-top:10px'>Expense Date : ${expenseDate}</p>
@@ -305,10 +339,14 @@ const fundsProcessedEmailTemplate = (
     <p style='margin-top:10px'>Expense Category : ${expenseItem}</p>
     
     <p style='margin-top:10px'>Amount : ${refundAmount}</p>
+
+    <p style='margin-top:10px'>Invoice Date : ${invoiceDate}</p>
     
     <p style='margin-top:10px'>Expense Description : ${message}</p>
     
     <p style='margin-top:10px'>Invoice No : ${invoiceNo}</p>
+
+    <p style='margin-top:10px'>Vendor Name : ${vendorName}</p>
     
    <p style='margin-top:10px'>Employee Consent : ${consent}<p>
     
@@ -326,11 +364,14 @@ const fundsRejectedEmailTemplate = (
   email,
   rejectionText,
   userId,
+  account,
   expenseDate,
   expenseItem,
   refundAmount,
+  invoiceDate,
   message,
   invoiceNo,
+  vendorName,
   consent,
   paidTo
 ) => {
@@ -374,16 +415,22 @@ const fundsRejectedEmailTemplate = (
     <p style='margin-top:10px'><b>Funds Rejection Reason: ${rejectionText}</b></p>
    
     <p style='margin-top:10px'>Employee Id : ${userId}</p>
+
+    <p style='margin-top:10px'>Approved Account : ${account}</p>
     
     <p style='margin-top:10px'>Expense Date : ${expenseDate}</p>
     
     <p style='margin-top:10px'>Expense Category : ${expenseItem}</p>
     
     <p style='margin-top:10px'>Amount : ${refundAmount}</p>
+
+    <p style='margin-top:10px'>Invoice Date : ${invoiceDate}</p>
     
     <p style='margin-top:10px'>Expense Description : ${message}</p>
     
     <p style='margin-top:10px'>Invoice No : ${invoiceNo}</p>
+
+    <p style='margin-top:10px'>Vendor Name: ${vendorName}</p>
     
    <p style='margin-top:10px'>Employee Consent : ${consent}<p>
     
@@ -395,7 +442,7 @@ const fundsRejectedEmailTemplate = (
   `;
 };
 
-app.post("/mail", (req, res) => {
+app.post("/mail", cors(corsOptions), (req, res) => {
   var name = req.body.employeeTitle;
   var time = new Date().toLocaleString();
   var email = req.body.employeeMail;
@@ -404,8 +451,11 @@ app.post("/mail", (req, res) => {
   var subject = "Reimbursement-Details";
   var consent = req.body.employee_consent;
   var expenseDate = req.body.date;
+
   var refundAmount = req.body.amount;
+  var invoiceDate = req.body.invoiceDate;
   var invoiceNo = req.body.invoice;
+  var vendorName = req.body.vendorCategory;
   var expenseItem = req.body.expenseCategory;
 
   var paidTo = req.body.emailId;
@@ -426,8 +476,10 @@ app.post("/mail", (req, res) => {
       (expenseDate = expenseDate),
       (expenseItem = expenseItem),
       (refundAmount = refundAmount),
+      (invoiceDate = invoiceDate),
       (message = message),
       (invoiceNo = invoiceNo),
+      (vendorName = vendorName),
       (consent = consent),
       (paidTo = paidTo)
     ),
@@ -463,11 +515,14 @@ app.post("/approvalMail", (req, res) => {
   var email = req.body.approvedEmailAddress;
 
   var userID = req.body.approvedEmployeeId;
+  var account = req.body.approvedAccount;
   var expenseDate = req.body.approvedDate;
   var expenseItem = req.body.approvedExpenseCategory;
   var refundAmount = req.body.approvedAmount;
+  var invoiceDate = req.body.approvedInvoiceDate;
   var message = req.body.approvedDescription;
   var invoiceNo = req.body.approvedInvoiceNo;
+  var vendorName = req.body.approvedVendor;
   var consent = req.body.approvedConsent;
   var paidTo = req.body.approvedPaidTo;
   var fileLink = req.body.approvedFileLink;
@@ -485,11 +540,14 @@ app.post("/approvalMail", (req, res) => {
       (time = time),
       (email = email),
       (userID = userID),
+      (account = account),
       (expenseDate = expenseDate),
       (expenseItem = expenseItem),
       (refundAmount = refundAmount),
+      (invoiceDate = invoiceDate),
       (message = message),
       (invoiceNo = invoiceNo),
+      (vendorName = vendorName),
       (consent = consent),
       (paidTo = paidTo)
     ),
@@ -526,11 +584,14 @@ app.post("/rejectionMail", (req, res) => {
   var email = req.body.rejectedEmailAddress;
   var rejectionText = req.body.rejectedReason;
   var userID = req.body.rejectedEmployeeId;
+  var account = req.body.rejectedAccount;
   var expenseDate = req.body.rejectedDate;
   var expenseItem = req.body.rejectedExpenseCategory;
   var refundAmount = req.body.rejectedAmount;
+  var invoiceDate = req.body.rejectedInvoiceDate;
   var message = req.body.rejectedDescription;
   var invoiceNo = req.body.rejectedInvoiceNo;
+  var vendorName = req.body.rejectedVendor;
   var consent = req.body.rejectedConsent;
   var paidTo = req.body.rejectedPaidTo;
   var fileLink = req.body.rejectedFileLink;
@@ -550,11 +611,14 @@ app.post("/rejectionMail", (req, res) => {
       (email = email),
       (rejectionText = rejectionText),
       (userID = userID),
+      (account = account),
       (expenseDate = expenseDate),
       (expenseItem = expenseItem),
       (refundAmount = refundAmount),
+      (invoiceDate = invoiceDate),
       (message = message),
       (invoiceNo = invoiceNo),
+      (vendorName = vendorName),
       (consent = consent),
       (paidTo = paidTo)
     ),
@@ -590,11 +654,14 @@ app.post("/fundsProcessedMail", (req, res) => {
   var time = new Date().toLocaleString();
   var email = req.body.fundProcessedEmailAddress;
   var userID = req.body.fundProcessedEmployeeId;
+  var account = req.body.fundProcessedApprovedAccount;
   var expenseDate = req.body.fundProcessedDate;
   var expenseItem = req.body.fundProcessedExpenseCategory;
   var refundAmount = req.body.fundProcessedAmount;
+  var invoiceDate = req.body.fundProcessedInvoiceDate;
   var message = req.body.fundProcessedDescription;
   var invoiceNo = req.body.fundProcessedInvoiceNo;
+  var vendorName = req.body.fundProcessedVendorName;
   var consent = req.body.fundProcessedConsent;
   var paidTo = req.body.fundProcessedPaidTo;
   var fileLink = req.body.fundProcessedFileLink;
@@ -613,11 +680,14 @@ app.post("/fundsProcessedMail", (req, res) => {
       (time = time),
       (email = email),
       (userID = userID),
+      (account = account),
       (expenseDate = expenseDate),
       (expenseItem = expenseItem),
       (refundAmount = refundAmount),
+      (invoiceDate = invoiceDate),
       (message = message),
       (invoiceNo = invoiceNo),
+      (vendorName = vendorName),
       (consent = consent),
       (paidTo = paidTo)
     ),
@@ -654,12 +724,15 @@ app.post("/fundsRejectedMail", (req, res) => {
   var email = req.body.fundRejectedEmailAddress;
   var rejectionText = req.body.fundRejectedReason;
   var userID = req.body.fundRejectedEmployeeId;
+  var account = req.body.fundRejectedAccount;
   var expenseDate = req.body.fundRejectedDate;
   var expenseItem = req.body.fundRejectedExpenseCategory;
   var refundAmount = req.body.fundRejectedAmount;
+  var invoiceDate = req.body.fundRejectedInvoiceDate;
   var message = req.body.fundRejectedDescription;
   var invoiceNo = req.body.fundRejectedInvoiceNo;
   var consent = req.body.fundRejectedConsent;
+  var vendorName = req.body.fundRejectedVendorName;
   var paidTo = req.body.fundRejectedPaidTo;
   var fileLink = req.body.fundRejectedFileLink;
   var approverMailId = req.body.approverMailId;
@@ -678,11 +751,14 @@ app.post("/fundsRejectedMail", (req, res) => {
       (email = email),
       (rejectionText = rejectionText),
       (userID = userID),
+      (account = account),
       (expenseDate = expenseDate),
       (expenseItem = expenseItem),
       (refundAmount = refundAmount),
+      (invoiceDate = invoiceDate),
       (message = message),
       (invoiceNo = invoiceNo),
+      (vendorName = vendorName),
       (consent = consent),
       (paidTo = paidTo)
     ),
