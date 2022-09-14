@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({ limit: "500mb", extended: true }));
 //production mode
 if (process.env.NODE_ENV === "production") {
   app.use(
-    express.static(path.join(__dirname, "reimbursement-form-mindera/build"))
+    express.static(path.join(__dirname, "/reimbursement-form-mindera/build"))
   );
   //
   app.get("*", function (req, res) {
