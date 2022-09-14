@@ -15,19 +15,6 @@ app.use(bodyParser.json({ limit: "500mb" }));
 
 app.use(bodyParser.urlencoded({ limit: "500mb", extended: true }));
 
-//production mode
-if (process.env.NODE_ENV === "production") {
-  app.use(
-    express.static(path.join(__dirname, "reimbursement-form-mindera/build"))
-  );
-  //
-  app.get("*", (req, res) => {
-    res.sendfile(
-      path.join((__dirname = "reimbursement-form-mindera/build/index.html"))
-    );
-  });
-}
-
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
