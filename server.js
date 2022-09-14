@@ -1,5 +1,5 @@
 const express = require("express");
-var cors = require("cors");
+// var cors = require("cors");
 
 let nodemailer = require("nodemailer");
 const bodyParser = require("body-parser");
@@ -9,7 +9,7 @@ let app = express();
 
 const path = require("path");
 
-app.use(cors());
+// app.use(cors());
 
 app.use("/public", express.static(path.join(__dirname, "public")));
 
@@ -439,71 +439,74 @@ const fundsRejectedEmailTemplate = (
   `;
 };
 
-app.post("/mail", (req, res) => {
-  var name = req.body.employeeTitle;
-  var time = new Date().toLocaleString();
-  var email = req.body.employeeMail;
-  var userID = req.body.id;
-  var message = req.body.description;
-  var subject = "Reimbursement-Details";
-  var consent = req.body.employee_consent;
-  var expenseDate = req.body.date;
+app.post(
+  "https://mailing-service-reimbursement.herokuapp.com/mail",
+  (req, res) => {
+    var name = req.body.employeeTitle;
+    var time = new Date().toLocaleString();
+    var email = req.body.employeeMail;
+    var userID = req.body.id;
+    var message = req.body.description;
+    var subject = "Reimbursement-Details";
+    var consent = req.body.employee_consent;
+    var expenseDate = req.body.date;
 
-  var refundAmount = req.body.amount;
-  var invoiceDate = req.body.invoiceDate;
-  var invoiceNo = req.body.invoice;
-  var vendorName = req.body.vendorCategory;
-  var expenseItem = req.body.expenseCategory;
+    var refundAmount = req.body.amount;
+    var invoiceDate = req.body.invoiceDate;
+    var invoiceNo = req.body.invoice;
+    var vendorName = req.body.vendorCategory;
+    var expenseItem = req.body.expenseCategory;
 
-  var paidTo = req.body.emailId;
-  var fileLink = req.body.pdfFile;
-  var approverMailId = req.body.approverMailId;
+    var paidTo = req.body.emailId;
+    var fileLink = req.body.pdfFile;
+    var approverMailId = req.body.approverMailId;
 
-  const mailOptions = {
-    from: creds.auth.user,
-    to: email,
-    cc: approverMailId,
-    subject: subject,
+    const mailOptions = {
+      from: creds.auth.user,
+      to: email,
+      cc: approverMailId,
+      subject: subject,
 
-    html: emailTemplate(
-      (name = name),
-      (time = time),
-      (email = email),
-      (userID = userID),
-      (expenseDate = expenseDate),
-      (expenseItem = expenseItem),
-      (refundAmount = refundAmount),
-      (invoiceDate = invoiceDate),
-      (message = message),
-      (invoiceNo = invoiceNo),
-      (vendorName = vendorName),
-      (consent = consent),
-      (paidTo = paidTo)
-    ),
-    attachments: [
-      {
-        filename: "Proof of Reimbursement",
-        // content: fileLink.split("base64,")[1],
-        // cid: `${fileLink}`, //same cid value as in the html img src
-        path: fileLink,
-      },
-    ],
-  };
+      html: emailTemplate(
+        (name = name),
+        (time = time),
+        (email = email),
+        (userID = userID),
+        (expenseDate = expenseDate),
+        (expenseItem = expenseItem),
+        (refundAmount = refundAmount),
+        (invoiceDate = invoiceDate),
+        (message = message),
+        (invoiceNo = invoiceNo),
+        (vendorName = vendorName),
+        (consent = consent),
+        (paidTo = paidTo)
+      ),
+      attachments: [
+        {
+          filename: "Proof of Reimbursement",
+          // content: fileLink.split("base64,")[1],
+          // cid: `${fileLink}`, //same cid value as in the html img src
+          path: fileLink,
+        },
+      ],
+    };
 
-  transporter.sendMail(mailOptions, (err, data) => {
-    if (err) {
-      res.json({
-        status: err,
-      });
-      console.log(err);
-    } else {
-      res.json({
-        status: "success",
-      });
-      console.log("Responses Email Sent");
-    }
-  });
-});
+    transporter.sendMail(mailOptions, (err, data) => {
+      if (err) {
+        res.json({
+          status: err,
+        });
+        console.log(err);
+      } else {
+        res.json({
+          status: "success",
+        });
+        console.log("Responses Email Sent");
+      }
+    });
+  }
+);
 
 app.post("/approvalMail", (req, res) => {
   var subject = "Reimbursement-Approval";
