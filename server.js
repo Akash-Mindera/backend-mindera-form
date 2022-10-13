@@ -1,6 +1,4 @@
 const express = require("express");
-// var cors = require("cors");
-
 let nodemailer = require("nodemailer");
 const bodyParser = require("body-parser");
 const creds = require("./credential.json");
@@ -9,39 +7,18 @@ let app = express();
 
 const path = require("path");
 
-// //Static file declaration
-// app.use(
-//   express.static(path.join(__dirname, "reimbursement-form-mindera/build"))
-// );
-// //production mode
-// if (process.env.NODE_ENV === "production") {
-//   app.use(
-//     express.static(path.join(__dirname, "reimbursement-form-mindera/build"))
-//   );
-//   //
-//   app.get("*", (req, res) => {
-//     res.sendfile(
-//       path.join((__dirname = "reimbursement-form-mindera/build/index.html"))
-//     );
-//   });
-// }
-
-// app.use("/public", express.static(path.join(__dirname, "public")));
-
 app.use(express.static(path.join(__dirname + "/public")));
 
-// if (process.env.NODE_ENV === "production") {
-//   app.use("/build", express.static(path.join(__dirname, "build")));
-// }
-
 // PATH CONFIGURATION TO RESPOND TO A REQUEST TO STATIC ROUTE REQUEST BY SERVING index.html
-app.get("/*", function (req, res) {
-  res.sendFile(path.join(__dirname, "/public", "index.html"));
-});
+// app.get("/*", function (req, res) {
+//   res.sendFile(path.join(__dirname, "/public", "index.html"));
+// });
 
 app.use(bodyParser.json({ limit: "500mb" }));
 
 app.use(bodyParser.urlencoded({ limit: "500mb", extended: true }));
+
+app.use(require("./router/form"));
 
 let transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",

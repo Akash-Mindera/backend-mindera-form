@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/static/css/main.4f89a330.css",
-    "main.js": "/static/js/main.de4489a9.js",
+    "main.css": "/static/css/main.79d6d742.css",
+    "main.js": "/static/js/main.166911a6.js",
     "static/media/35_writing.png": "/static/media/35_writing.9a85d524e70275b756cd.png",
     "static/media/mindera-symbol.png": "/static/media/mindera-symbol.900e65ede44a31511c98.png",
     "static/media/mindera-logo-2.png": "/static/media/mindera-logo-2.02e202eb5591d52a3578.png",
     "static/media/mindera-logo.png": "/static/media/mindera-logo.3c7de1087369f683413c.png",
     "index.html": "/index.html",
-    "main.4f89a330.css.map": "/static/css/main.4f89a330.css.map",
-    "main.de4489a9.js.map": "/static/js/main.de4489a9.js.map"
+    "main.79d6d742.css.map": "/static/css/main.79d6d742.css.map",
+    "main.166911a6.js.map": "/static/js/main.166911a6.js.map"
   },
   "entrypoints": [
-    "static/css/main.4f89a330.css",
-    "static/js/main.de4489a9.js"
+    "static/css/main.79d6d742.css",
+    "static/js/main.166911a6.js"
   ]
 }
