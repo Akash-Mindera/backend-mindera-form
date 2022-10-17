@@ -33,7 +33,7 @@ const checkAuth = (req, res, next) => {
       .auth()
       .verifyIdToken(req.headers.authtoken)
       .then((token) => {
-        // console.log(token);
+        console.log(token);
         next();
       })
       .catch(() => {
@@ -54,9 +54,7 @@ router.post("/formData", checkAuth, (req, res) => {
     .then(() => {
       res.status(201).json({ message: "Form is filled successfully" });
     })
-    .catch((err) =>
-      res.status(500).json({ message: "Failed to fill form" }, console.log(err))
-    );
+    .catch((err) => res.status(500).json({ message: "Failed to fill form" }));
 });
 
 // Get Api For Users //
@@ -355,6 +353,34 @@ router.get(
   }
 );
 
+router.get(
+  "/declinedActionByApprover/:approverMailId",
+  checkAuth,
+  async (req, res) => {
+    fetchByMailId = req.params.approverMailId;
+    const PAGE_SIZE = 6;
+    const page = parseInt(req.query.page || "0");
+
+    const total = await FormData.countDocuments({
+      approverMailId: fetchByMailId,
+      IsApproved: "No",
+    });
+    const data = await FormData.find({
+      approverMailId: fetchByMailId,
+      IsApproved: "No",
+    })
+      .limit(PAGE_SIZE)
+      .skip(PAGE_SIZE * page)
+      .sort({ $natural: -1 });
+    res.json({
+      total: Math.ceil(total / PAGE_SIZE),
+      data,
+      totalRecords: total,
+    });
+    return;
+  }
+);
+
 // Get Api For Approver for Actions using search//
 
 router.get(
@@ -426,6 +452,40 @@ router.get(
   }
 );
 
+router.get(
+  "/declinedActionByApproverUsingSearch/:approverMailId",
+  checkAuth,
+  async (req, res) => {
+    fetchByMailId = req.params.approverMailId;
+    const employeeId = req.query.employeeId;
+    const createdAt = req.query.createdAt;
+
+    if (employeeId && createdAt) {
+      const data = await FormData.find({
+        approverMailId: fetchByMailId,
+        IsApproved: "No",
+        UserSpecificId: employeeId,
+        createdAt: createdAt,
+      });
+      res.json({ data });
+    } else if (employeeId && !createdAt) {
+      const data = await FormData.find({
+        approverMailId: fetchByMailId,
+        IsApproved: "No",
+        UserSpecificId: employeeId,
+      });
+      res.json({ data });
+    } else if (createdAt && !employeeId) {
+      const data = await FormData.find({
+        approverMailId: fetchByMailId,
+        IsApproved: "No",
+        createdAt: createdAt,
+      });
+      res.json({ data });
+    }
+  }
+);
+
 // Fetching Records Using Document Id for Approver
 router.get(
   "/fetchRecordsById/:reimbursementId",
@@ -446,6 +506,30 @@ router.get(
 
 router.patch(
   "/setResponseApproved/:reimbursementId",
+  checkAuth,
+  async (req, res) => {
+    const updates = req.body;
+    console.log(updates);
+    fetchByRemId = req.params.reimbursementId;
+
+    await FormData.updateOne(
+      {
+        _id: fetchByRemId,
+        IsApproved: "",
+      },
+      { $set: updates }
+    )
+      .then(() => {
+        res.status(201).json({ message: "Update is Sucessfull" });
+      })
+      .catch((err) => res.status(500).json({ message: "Update Failed" }));
+  }
+);
+
+// Patch Request for Approver - Setting is Approved to 'No'
+
+router.patch(
+  "/setResponseRejected/:reimbursementId",
   checkAuth,
   async (req, res) => {
     const updates = req.body;
